@@ -1,1 +1,1 @@
-# django-user-portal
+# django-jobs-portal
