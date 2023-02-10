@@ -31,6 +31,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Company(models.Model):
     name = models.CharField(max_length=255)
+    active = models.BooleanField(default=True)
+    website = models.URLField(max_length=200, null=True, blank=True)
 
     def __str__(self):
         return self.name
