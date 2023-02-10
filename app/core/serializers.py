@@ -71,6 +71,16 @@ class RecruiterSerializer(serializers.ModelSerializer):
         return instance
 
 
+class RecruiterRetrieveListSerializer(serializers.ModelSerializer):
+    """Serializer for the recruiter object."""
+    user = UserSerializer()
+    company = CompanySerializer()
+
+    class Meta:
+        model = Recruiter
+        fields = '__all__'
+
+
 class AuthTokenSerializer(serializers.Serializer):
     """Serializer for the user auth token."""
     email = serializers.EmailField()
@@ -94,3 +104,4 @@ class AuthTokenSerializer(serializers.Serializer):
 
         attrs['user'] = user
         return attrs
+
