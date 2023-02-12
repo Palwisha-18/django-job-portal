@@ -8,7 +8,8 @@ from rest_framework import authentication, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.generics import (
     ListCreateAPIView,
-    RetrieveUpdateDestroyAPIView,
+    RetrieveDestroyAPIView,
+    UpdateAPIView
 )
 from rest_framework.response import Response
 from rest_framework.settings import api_settings
@@ -20,7 +21,7 @@ class RecruiterProfileCreateView(ListCreateAPIView):
     queryset = Recruiter.objects.all()
 
 
-class RecruiterDetailsManageView(RetrieveUpdateDestroyAPIView):
+class RecruiterDetailsManageView(RetrieveDestroyAPIView):
     """Manage the authenticated user."""
     serializer_class = RecruiterRetrieveListSerializer
     authentication_classes = [authentication.TokenAuthentication]
@@ -37,6 +38,18 @@ class RecruiterDetailsManageView(RetrieveUpdateDestroyAPIView):
             return Response(data={'message': 'User Deleted Successfully'}, status=HTTP_200_OK)
         except Exception as e:
             return Response(data={'message': 'Operation Not Successful'}, status=HTTP_400_BAD_REQUEST)
+
+
+class RecruiterUpdateView(UpdateAPIView):
+    """Manage the authenticated user."""
+    queryset = Recruiter.objects.all()
+    serializer_class = RecruiterSerializer
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        """Retrieve and return the authenticated user."""
+        return self.request.user.recruiter
 
 
 class CreateTokenView(ObtainAuthToken):
