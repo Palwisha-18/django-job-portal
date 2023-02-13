@@ -16,9 +16,22 @@ from rest_framework.settings import api_settings
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 
 
-class RecruiterProfileCreateView(ListCreateAPIView):
+class RecruiterProfileListCreateView(ListCreateAPIView):
     serializer_class = RecruiterSerializer
-    queryset = Recruiter.objects.all()
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        company = getattr(self.request.user.recruiter, 'company', None)
+        is_admin = getattr(self.request.user.recruiter, 'is_admin', None)
+
+        if (not company or not is_admin):
+            return Recruiter.objects.none()
+
+        if is_admin:
+            return Recruiter.objects.filter(company=company)
+
+        return Recruiter.objects.all()
 
 
 class RecruiterDetailsManageView(RetrieveDestroyAPIView):
