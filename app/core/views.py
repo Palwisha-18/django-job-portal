@@ -59,7 +59,7 @@ class RecruiterDetailsManageView(RetrieveDestroyAPIView):
 
 class RecruiterUpdateView(UpdateAPIView):
     """ Update User Profile"""
-    queryset = Recruiter.objects.all()
+
     serializer_class = RecruiterSerializer
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
