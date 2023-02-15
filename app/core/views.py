@@ -17,15 +17,20 @@ from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 
 
 class RecruiterProfileListCreateView(ListCreateAPIView):
+    """ List or Create Users """
     serializer_class = RecruiterSerializer
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
+        is_super_user = getattr(self.request.user, 'is_superuser', None)
+        if is_super_user:
+            return Recruiter.objects.all()
+
         company = getattr(self.request.user.recruiter, 'company', None)
         is_admin = getattr(self.request.user.recruiter, 'is_admin', None)
 
-        if (not company or not is_admin):
+        if not company or not is_admin:
             return Recruiter.objects.none()
 
         if is_admin:
@@ -35,13 +40,12 @@ class RecruiterProfileListCreateView(ListCreateAPIView):
 
 
 class RecruiterDetailsManageView(RetrieveDestroyAPIView):
-    """Manage the authenticated user."""
+    """ Retrieve or Delete User Profile """
     serializer_class = RecruiterRetrieveListSerializer
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
-        """Retrieve and return the authenticated user."""
         return self.request.user.recruiter
 
     def destroy(self, *args, **kwargs):
@@ -54,14 +58,13 @@ class RecruiterDetailsManageView(RetrieveDestroyAPIView):
 
 
 class RecruiterUpdateView(UpdateAPIView):
-    """Manage the authenticated user."""
+    """ Update User Profile"""
     queryset = Recruiter.objects.all()
     serializer_class = RecruiterSerializer
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
-        """Retrieve and return the authenticated user."""
         return self.request.user.recruiter
 
 
