@@ -19,7 +19,6 @@ from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 class RecruiterProfileListCreateView(ListCreateAPIView):
     """ List or Create Users """
     serializer_class = RecruiterSerializer
-    authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
@@ -42,7 +41,6 @@ class RecruiterProfileListCreateView(ListCreateAPIView):
 class RecruiterDetailsManageView(RetrieveDestroyAPIView):
     """ Retrieve or Delete User Profile """
     serializer_class = RecruiterRetrieveListSerializer
-    authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
@@ -61,7 +59,6 @@ class RecruiterUpdateView(UpdateAPIView):
     """ Update User Profile"""
 
     serializer_class = RecruiterSerializer
-    authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):

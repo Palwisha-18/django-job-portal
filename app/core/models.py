@@ -1,6 +1,7 @@
 """
 Database models.
 """
+import uuid
 from core.managers import UserManager
 from django.conf import settings
 from django.contrib.auth.models import (
@@ -14,6 +15,7 @@ from django.utils.translation import gettext_lazy as _
 
 class User(AbstractBaseUser, PermissionsMixin):
     """User in the system."""
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
@@ -30,6 +32,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Company(models.Model):
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     active = models.BooleanField(default=True)
     website = models.URLField(max_length=200, null=True, blank=True)
@@ -42,8 +45,7 @@ class Company(models.Model):
 
 
 class Recruiter(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='recruiter', null=True, blank=True,
-                                on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='recruiter', on_delete=models.CASCADE)
     company = models.ForeignKey(Company, default=None, null=True, blank=True, on_delete=models.SET_NULL,
                                 related_name='recruiters')
     is_admin = models.BooleanField(default=False)
