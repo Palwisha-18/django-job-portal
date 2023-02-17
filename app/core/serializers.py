@@ -1,6 +1,12 @@
-from core.models import Recruiter, Company
-from django.contrib.auth import get_user_model, authenticate
-from django.utils.translation import gettext as _
+from core.error_messages import (
+    MISSING_USER_MSG,
+    USER_ALREADY_EXISTS_MSG,
+)
+from core.models import (
+    Recruiter,
+    Company,
+)
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.status import HTTP_400_BAD_REQUEST
 
@@ -46,25 +52,19 @@ class RecruiterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user_info = validated_data.pop('user', None)
-        if user_info:
-            if get_user_model().objects.filter(email=user_info.get('email')).exists():
-                res = serializers.ValidationError()
-                res.status_code = HTTP_400_BAD_REQUEST
-                res.detail = {
-                    'message': 'A user with this email already exists!',
-                    'user_exists_error': True
-                }
-                raise res
-            user = get_user_model().objects.create_user(**user_info)
-            recruiter = Recruiter.objects.create(user=user, **validated_data)
-        else:
+        if not user_info:
             res = serializers.ValidationError()
             res.status_code = HTTP_400_BAD_REQUEST
-            res.detail = {
-                'message': 'User object is missing from request.',
-                'missing_user_object': True
-            }
+            res.detail = MISSING_USER_MSG
             raise res
+
+        if get_user_model().objects.filter(email=user_info.get('email')).exists():
+            res = serializers.ValidationError()
+            res.status_code = HTTP_400_BAD_REQUEST
+            res.detail = USER_ALREADY_EXISTS_MSG
+            raise res
+        user = get_user_model().objects.create_user(**user_info)
+        recruiter = Recruiter.objects.create(user=user, **validated_data)
 
         return recruiter
 
