@@ -53,16 +53,11 @@ class RecruiterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user_info = validated_data.pop('user', None)
         if not user_info:
-            res = serializers.ValidationError()
-            res.status_code = HTTP_400_BAD_REQUEST
-            res.detail = MISSING_USER_MSG
-            raise res
+            raise serializers.ValidationError(detail=USER_ALREADY_EXISTS_MSG, status_code=MISSING_USER_MSG)
 
         if get_user_model().objects.filter(email=user_info.get('email')).exists():
-            res = serializers.ValidationError()
-            res.status_code = HTTP_400_BAD_REQUEST
-            res.detail = USER_ALREADY_EXISTS_MSG
-            raise res
+            raise serializers.ValidationError(detail=USER_ALREADY_EXISTS_MSG, status_code=HTTP_400_BAD_REQUEST)
+
         user = get_user_model().objects.create_user(**user_info)
         recruiter = Recruiter.objects.create(user=user, **validated_data)
 
