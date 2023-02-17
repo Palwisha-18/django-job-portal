@@ -12,10 +12,10 @@ from rest_framework_simplejwt.views import (
 app_name = 'core'
 
 urlpatterns = [
-    path(r'user/create/', views.RecruiterProfileCreateView.as_view(), name='create-user'),
-    path(r'user/list/', views.RecruiterProfileListView.as_view(), name='list-user'),
-    path(r'user/details/', views.RecruiterDetailsManageView.as_view(), name='details-user'),
-    path(r'user/update/', views.RecruiterUpdateView.as_view(), name='update-user'),
+    path(r'recruiter/create/', views.RecruiterProfileCreateView.as_view(), name='create-user'),
+    path(r'recruiter/list/', views.RecruiterProfileListView.as_view(), name='list-user'),
+    path(r'recruiter/details/', views.RecruiterDetailsManageView.as_view(), name='details-user'),
+    path(r'recruiter/update/', views.RecruiterUpdateView.as_view(), name='update-user'),
     path(r'user/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path(r'user/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path(r'company/create/', views.CompanyCreateView.as_view(), name='create-company'),
