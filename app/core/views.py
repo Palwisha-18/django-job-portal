@@ -1,25 +1,38 @@
-from core.models import Recruiter
+from core.models import (
+    Recruiter,
+    Company,
+)
+from core.permissions import (
+    IsOwner
+)
 from core.serializers import (
+    CompanySerializer,
     RecruiterSerializer,
     RecruiterRetrieveListSerializer,
-    AuthTokenSerializer,
 )
-from rest_framework import authentication, permissions
-from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework import permissions
 from rest_framework.generics import (
-    ListCreateAPIView,
+    CreateAPIView,
+    ListAPIView,
     RetrieveDestroyAPIView,
     UpdateAPIView
 )
 from rest_framework.response import Response
-from rest_framework.settings import api_settings
-from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
+from rest_framework.status import (
+    HTTP_200_OK,
+    HTTP_400_BAD_REQUEST
+)
 
 
-class RecruiterProfileListCreateView(ListCreateAPIView):
-    """ List or Create Users """
+class RecruiterProfileCreateView(CreateAPIView):
+    """ Create Recruiter Instance """
     serializer_class = RecruiterSerializer
-    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+
+
+class RecruiterProfileListView(ListAPIView):
+    """ List Recruiter Instances"""
+    serializer_class = RecruiterRetrieveListSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
@@ -36,14 +49,13 @@ class RecruiterProfileListCreateView(ListCreateAPIView):
         if is_admin:
             return Recruiter.objects.filter(company=company)
 
-        return Recruiter.objects.all()
+        return Recruiter.objects.none()
 
 
 class RecruiterDetailsManageView(RetrieveDestroyAPIView):
-    """ Retrieve or Delete User Profile """
+    """ Retrieve or Delete Recruiter Profile """
     serializer_class = RecruiterRetrieveListSerializer
-    authentication_classes = [authentication.TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
 
     def get_object(self):
         return self.request.user.recruiter
@@ -58,17 +70,22 @@ class RecruiterDetailsManageView(RetrieveDestroyAPIView):
 
 
 class RecruiterUpdateView(UpdateAPIView):
-    """ Update User Profile"""
-
+    """ Update Recruiter Profile """
     serializer_class = RecruiterSerializer
-    authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
         return self.request.user.recruiter
 
 
-class CreateTokenView(ObtainAuthToken):
-    """Create a new auth token for user."""
-    serializer_class = AuthTokenSerializer
-    renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
+class CompanyCreateView(CreateAPIView):
+    """ Create Company Instance """
+    serializer_class = CompanySerializer
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+
+
+class CompanyListView(ListAPIView):
+    """ List all Company Instances """
+    queryset = Company.objects.all()
+    serializer_class = CompanySerializer
+    permission_classes = [permissions.IsAuthenticated]

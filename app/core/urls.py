@@ -4,12 +4,20 @@ URL mappings for the user API.
 """
 from core import views
 from django.urls import path
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 app_name = 'core'
 
 urlpatterns = [
-    path(r'manage-users/', views.RecruiterProfileListCreateView.as_view(), name='manage-users'),
-    path(r'token/', views.CreateTokenView.as_view(), name='token'),
-    path(r'details/', views.RecruiterDetailsManageView.as_view(), name='details'),
-    path(r'update/', views.RecruiterUpdateView.as_view(), name='update'),
+    path(r'recruiter/create/', views.RecruiterProfileCreateView.as_view(), name='create-user'),
+    path(r'recruiter/list/', views.RecruiterProfileListView.as_view(), name='list-user'),
+    path(r'recruiter/details/', views.RecruiterDetailsManageView.as_view(), name='details-user'),
+    path(r'recruiter/update/', views.RecruiterUpdateView.as_view(), name='update-user'),
+    path(r'user/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path(r'user/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path(r'company/create/', views.CompanyCreateView.as_view(), name='create-company'),
+    path(r'company/list/', views.CompanyListView.as_view(), name='list-company'),
 ]
