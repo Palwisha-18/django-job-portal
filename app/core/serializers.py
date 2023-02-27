@@ -8,7 +8,8 @@ from core.models import (
 )
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from rest_framework.status import HTTP_400_BAD_REQUEST
+from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_200_OK
+from rest_framework.response import Response
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -25,6 +26,24 @@ class UserSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         """ Update and return user """
+        password = validated_data.pop('password', None)
+        user = super().update(instance, validated_data)
+
+        if password:
+            user.set_password(password)
+            user.save()
+
+        return user
+
+
+class UserChangePasswordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = ['password']
+        extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
+
+    def update(self, instance, validated_data):
+        """ Update password of user """
         password = validated_data.pop('password', None)
         user = super().update(instance, validated_data)
 

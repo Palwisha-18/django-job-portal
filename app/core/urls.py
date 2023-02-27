@@ -18,6 +18,7 @@ urlpatterns = [
     path(r'recruiter/update/', views.RecruiterUpdateView.as_view(), name='update-user'),
     path(r'user/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path(r'user/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path(r'user/password/reset/', views.UserChangePasswordView.as_view(), name='update-user-password'),
     path(r'company/create/', views.CompanyCreateView.as_view(), name='create-company'),
     path(r'company/list/', views.CompanyListView.as_view(), name='list-company'),
 ]
