@@ -6,6 +6,7 @@ from core.permissions import (
     IsOwner
 )
 from core.serializers import (
+    UserChangePasswordSerializer,
     CompanySerializer,
     RecruiterSerializer,
     RecruiterRetrieveListSerializer,
@@ -98,3 +99,11 @@ class CompanyListView(ListAPIView):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+class UserChangePasswordView(UpdateAPIView):
+    serializer_class = UserChangePasswordSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
