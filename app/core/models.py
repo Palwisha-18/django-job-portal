@@ -15,9 +15,24 @@ from django.utils.translation import gettext_lazy as _
 
 class User(AbstractBaseUser, PermissionsMixin):
     """User in the system."""
+    class Role:
+        ADMIN = 'PortalAdmin'
+        RECRUITER = 'Recruiter'
+        APPLICANT = 'Applicant'
+
+        CHOICES = (
+            ('Admin', ADMIN),
+            ('Recruiter', RECRUITER),
+            ('Applicant', APPLICANT),
+        )
+
     uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
+    role = models.CharField(
+        max_length=255,
+        choices=Role.CHOICES
+    )
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     last_active = models.DateTimeField(_('last_active'), null=True, blank=True)
@@ -49,3 +64,27 @@ class Recruiter(models.Model):
     company = models.ForeignKey(Company, default=None, null=True, blank=True, on_delete=models.SET_NULL,
                                 related_name='recruiters')
     is_admin = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.email
+
+
+class Applicant(models.Model):
+    class Gender:
+        MALE = 'Male'
+        FEMALE = 'Female'
+
+        CHOICES = (
+            ('M', MALE),
+            ('F', FEMALE),
+        )
+
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='applicant', on_delete=models.CASCADE)
+    gender = models.CharField(
+        max_length=1,
+        choices=Gender.CHOICES
+    )
+    salary_expectation = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return self.user.email

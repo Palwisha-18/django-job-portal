@@ -11,10 +11,10 @@ from django.utils.translation import gettext_lazy as _
 class UserAdmin(BaseUserAdmin):
     """Define the admin pages for users."""
     ordering = ['id']
-    list_display = ['email', 'name']
+    list_display = ['email', 'name', 'role']
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        (_('Personal Info'), {'fields': ('name',)}),
+        (_('Personal Info'), {'fields': ('name', 'role', )}),
         (
             _('Permissions'),
             {
@@ -36,6 +36,7 @@ class UserAdmin(BaseUserAdmin):
                 'password1',
                 'password2',
                 'name',
+                'role',
                 'is_active',
                 'is_staff',
                 'is_superuser',
@@ -50,3 +51,4 @@ admin.site.unregister(Group)
 admin.site.register(models.User, UserAdmin)
 admin.site.register(models.Company)
 admin.site.register(models.Recruiter)
+admin.site.register(models.Applicant)

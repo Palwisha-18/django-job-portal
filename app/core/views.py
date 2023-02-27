@@ -10,6 +10,7 @@ from core.serializers import (
     CompanySerializer,
     RecruiterSerializer,
     RecruiterRetrieveListSerializer,
+    UserSerializer
 )
 from rest_framework import permissions
 from rest_framework.generics import (
@@ -23,6 +24,14 @@ from rest_framework.status import (
     HTTP_200_OK,
     HTTP_400_BAD_REQUEST
 )
+
+
+class UserRetrieveView(RetrieveDestroyAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
+
+    def get_object(self):
+        return self.request.user
 
 
 class RecruiterProfileCreateView(CreateAPIView):
