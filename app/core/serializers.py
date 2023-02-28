@@ -44,7 +44,7 @@ class UserChangePasswordSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         if not data.get('password'):
-            raise serializers.ValidationError({'password': 'Password field is required.'})
+            raise serializers.ValidationError({'messgae': 'Password field is required.'})
 
         return data
 
