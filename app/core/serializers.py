@@ -42,16 +42,21 @@ class UserChangePasswordSerializer(serializers.ModelSerializer):
         fields = ['password']
         extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
 
+    def validate(self, data):
+        if not data.get('password'):
+            raise serializers.ValidationError({'password': 'Password field is required.'})
+
+        return data
+
     def update(self, instance, validated_data):
         """ Update password of user """
-        password = validated_data.pop('password', None)
-        user = super().update(instance, validated_data)
+        instance.set_password(validated_data['password'])
+        instance.save()
+        return instance
 
-        if password:
-            user.set_password(password)
-            user.save()
-
-        return user
+    @property
+    def data(self):
+        return {'message': 'Your password has been successfully updated!'}
 
 
 class CompanySerializer(serializers.ModelSerializer):
