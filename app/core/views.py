@@ -22,8 +22,11 @@ from rest_framework.generics import (
 from rest_framework.response import Response
 from rest_framework.status import (
     HTTP_200_OK,
-    HTTP_400_BAD_REQUEST
+    HTTP_400_BAD_REQUEST,
+    HTTP_205_RESET_CONTENT
 )
+from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class UserRetrieveView(RetrieveDestroyAPIView):
@@ -107,3 +110,17 @@ class UserChangePasswordView(UpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class LogoutView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+
+        try:
+            refresh_token = request.data["refresh_token"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response(status=HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response(status=HTTP_400_BAD_REQUEST)
